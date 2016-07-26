@@ -1,4 +1,4 @@
-# Adds producto information to train file
+# Adds producto and town_state information to train file
 SELECT
   train.Semana as Semana,
   train.Agencia_ID as Agencia_ID,
