@@ -1,0 +1,8 @@
+SELECT Producto_ID, NombreProducto,
+REGEXP_EXTRACT(NombreProducto, r'^(\D*)') as shortName,
+REGEXP_EXTRACT(NombreProducto, r'^.+\s(\D+) \d+$') as brand,
+CASE WHEN REGEXP_EXTRACT(LOWER(NombreProducto), r'\d+(kg|g)')='kg' THEN FLOAT(REGEXP_EXTRACT(LOWER(NombreProducto), r'(\d+)[kg|g]'))*1000
+WHEN REGEXP_EXTRACT(LOWER(NombreProducto), r'\d+(kg|g)')='g' THEN FLOAT(REGEXP_EXTRACT(LOWER(NombreProducto), r'(\d+)[kg|g]'))
+ELSE NULL END as w,
+REGEXP_EXTRACT(NombreProducto, r'(\d+)p ') as pieces
+FROM [kaggle_bimbo.producto_tabla]
