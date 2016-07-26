@@ -1,0 +1,34 @@
+# Adds producto information to train file
+SELECT
+  train.Semana as Semana,
+  train.Agencia_ID as Agencia_ID,
+  train.Canal_ID as Canal_ID,
+  train.Ruta_SAK as Ruta_SAK,
+  train.Cliente_ID as Cliente_ID,
+  train.Producto_ID as Producto_ID,
+  train.Venta_uni_hoy as Venta_uni_hoy,
+  train.Venta_hoy as Venta_hoy,
+  train.Dev_uni_proxima as Dev_uni_proxima,
+  train.Dev_proxima as Dev_proxima,
+  train.Demanda_uni_equil as Demanda_uni_equil,
+  cliente.NombreCliente as NombreCliente,
+  producto.NombreProducto as NombreProducto,
+  producto.shortName as shortName,
+  producto.brand as brand,
+  producto.weight as weight,
+  producto.pieces as pieces,
+  town_state.Town as Town,
+  town_state.State as State
+FROM
+  [kaggle_bimbo.train] as train
+LEFT OUTER JOIN EACH
+  (SELECT Cliente_ID, IF(Cliente_ID = '1646352', 'LA CHIQUITA', NombreCliente) as NombreCliente FROM 
+  (select Cliente_ID, REGEXP_REPLACE(NombreCliente, r'\s\s\s?', ' ') as NombreCliente FROM [kaggle_bimbo.cliente_tabla])
+  group each by Cliente_ID, NombreCliente) as cliente
+ON train.Cliente_ID = cliente.Cliente_ID
+LEFT OUTER JOIN EACH
+  [kaggle_bimbo.producto_table_extended] as producto
+ON train.Producto_ID = producto.Producto_ID
+  LEFT OUTER JOIN EACH
+    [kaggle_bimbo.town_state] as town_state
+ON train.Agencia_ID = town_state.Agencia_ID
