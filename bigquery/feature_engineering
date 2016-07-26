@@ -1,0 +1,12 @@
+# Feature engineering for train (weight/pieces + lag)
+SELECT
+  *,
+  CASE WHEN pieces IS NULL THEN weight
+  WHEN weight IS NULL THEN 0
+  ELSE weight/pieces
+  END AS wtpcs,    
+  SUM(Demanda_uni_equil) OVER (PARTITION BY Producto_ID, Cliente_ID ORDER BY Semana RANGE BETWEEN 3 PRECEDING AND 1 PRECEDING ) AS lag_3,
+  SUM(Demanda_uni_equil) OVER (PARTITION BY Producto_ID, Cliente_ID ORDER BY Semana RANGE BETWEEN 2 PRECEDING AND 1 PRECEDING ) AS lag_2,
+  SUM(Demanda_uni_equil) OVER (PARTITION BY Producto_ID, Cliente_ID ORDER BY Semana RANGE BETWEEN 1 PRECEDING AND 1 PRECEDING ) AS lag_1,
+FROM
+  [datascience-1000:kaggle_bimbo.train_extended_producto]
